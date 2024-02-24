@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
         source ="hashicorp/azurerm"
-        version = "=3.0.0"
+        version = "~> 3.69"
     }
   }
 }
@@ -66,7 +66,7 @@ resource "azurerm_linux_function_app" "dev-fa" {
     http2_enabled       = true
     minimum_tls_version = "1.2"
     application_stack {
-        node_version = "16"
+        node_version = "18"
     }
     #application_insights_key               = azurerm_application_insights.this.instrumentation_key
     #application_insights_connection_string = azurerm_application_insights.this.connection_string
@@ -74,4 +74,11 @@ resource "azurerm_linux_function_app" "dev-fa" {
   tags = {
     env = "dev"
   }
+}
+
+resource "azurerm_app_service_source_control" "gitIntegration" {
+  app_id                 = azurerm_linux_function_app.dev-fa.id
+  repo_url               = "https://github.com/findashu/azure-function-app.git"
+  branch                 = "main"
+  use_manual_integration = true
 }
