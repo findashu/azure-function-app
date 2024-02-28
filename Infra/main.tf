@@ -63,22 +63,59 @@ resource "azurerm_linux_function_app" "dev-fa" {
     type = "SystemAssigned"
   }
   site_config {
+    always_on = true
     http2_enabled       = true
     minimum_tls_version = "1.2"
     application_stack {
         node_version = "18"
     }
+    cors {
+      allowed_origins     = ["*","https://portal.azure.com"]  // Specify allowed origins
+    }
     #application_insights_key               = azurerm_application_insights.this.instrumentation_key
     #application_insights_connection_string = azurerm_application_insights.this.connection_string
   }
+  
   tags = {
     env = "dev"
   }
 }
 
-resource "azurerm_app_service_source_control" "gitIntegration" {
-  app_id                 = azurerm_linux_function_app.dev-fa.id
-  repo_url               = "https://github.com/findashu/azure-function-app.git"
-  branch                 = "main"
-  use_manual_integration = true
+# resource "azurerm_app_service_source_control" "gitIntegration" {
+#   app_id                 = azurerm_linux_function_app.dev-fa.id
+#   repo_url               = "https://github.com/findashu/azure-function-app.git"
+#   branch                 = "main"
+#   use_manual_integration = true
+# }
+
+resource "azurerm_function_app_function" "restFA" {
+  name            = "simple-rest-fa"
+  enabled         = true
+  function_app_id = azurerm_linux_function_app.dev-fa.id
+  language        = "Javascript"
+  file {
+    name    = "index.js"
+    content = file("../Application/UserFA/index.js")
+  }
+  test_data = file("../Application/UserFA/sample.dat")
+  #config_json = file("../Application/UserFA/function.json");
+  config_json = jsonencode({
+    "bindings" = [
+      {
+        "authLevel" = "anonymous"
+        "direction" = "in"
+        "methods" = [
+          "get",
+          "post",
+        ]
+        "name" = "req"
+        "type" = "httpTrigger"
+      },
+      {
+        "direction" = "out"
+        "name"      = "res"
+        "type"      = "http"
+      },
+    ]
+  })
 }
