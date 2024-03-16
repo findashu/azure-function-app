@@ -12,6 +12,7 @@ provider "azurerm" {
   features {}
 }
 
+
 resource "azurerm_resource_group" "waRG" {
   name     = "web-app-rg"
   location = "East US2"
@@ -55,7 +56,7 @@ resource "azurerm_linux_function_app" "dev-fa" {
   location            = azurerm_resource_group.waRG.location
   service_plan_id     = azurerm_service_plan.dev-asp.id
   storage_account_name = azurerm_storage_account.faSA.name
-  storage_uses_managed_identity = true
+  storage_account_access_key = azurerm_storage_account.faSA.primary_access_key
   https_only                    = true
   builtin_logging_enabled       = false
   functions_extension_version   = "~4"
@@ -80,6 +81,8 @@ resource "azurerm_linux_function_app" "dev-fa" {
     env = "dev"
   }
 }
+
+# Actual Function App Could be deployed in many especially when you are working locally and playing around.
 
 # resource "azurerm_app_service_source_control" "gitIntegration" {
 #   app_id                 = azurerm_linux_function_app.dev-fa.id
