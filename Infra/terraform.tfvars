@@ -1,0 +1,7 @@
+env = "dev"
+location = "East US2"
+resourceGroupName = "helper-service"
+storageAccountName = "helperservice"
+storageAccountTier = "Standard"
+appServicePlanName = "helper-service"
+functionAppName = "helper-service"
