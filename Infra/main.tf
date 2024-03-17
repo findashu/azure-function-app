@@ -12,20 +12,23 @@ provider "azurerm" {
   features {}
 }
 
-
-resource "azurerm_resource_group" "waRG" {
-  name     = "web-app-rg"
-  location = "East US2"
+locals {
   tags = {
     env = "dev"
   }
 }
 
+resource "azurerm_resource_group" "waRG" {
+  name     = "${var.resourceGroupName}-rg-${var.env}"
+  location = var.location
+  tags = local.tags
+}
+
 resource "azurerm_storage_account" "faSA" {
-  name                     = "devfappsa"
+  name                     = "${var.storageAccountName}sa${var.env}"
   resource_group_name      = azurerm_resource_group.waRG.name
   location                 = azurerm_resource_group.waRG.location
-  account_tier             = "Standard"
+  account_tier             = var.storageAccountTier
   account_replication_type = "LRS"
   access_tier              = "Hot"
   account_kind             = "StorageV2"
@@ -33,25 +36,21 @@ resource "azurerm_storage_account" "faSA" {
   enable_https_traffic_only = true
   allow_nested_items_to_be_public  = false
   shared_access_key_enabled        = true
-  tags = {
-    env = "dev"
-  }
+  tags = local.tags
 }
 
 resource "azurerm_service_plan" "dev-asp" {
-  name                = "dev-app-service-plan"
+  name                = "${var.appServicePlanName}-asp-${var.env}"
   resource_group_name = azurerm_resource_group.waRG.name
   location            = azurerm_resource_group.waRG.location
   os_type             = "Linux"
   sku_name            = "S1"
-  tags = {
-    env = "dev"
-  }
+  tags = local.tags
 }
 
 
 resource "azurerm_linux_function_app" "dev-fa" {
-  name                = "dev-saacessdemo-fa" #has to be unique
+  name                = "${var.functionAppName}-asp-${var.env}" #has to be unique
   resource_group_name = azurerm_resource_group.waRG.name
   location            = azurerm_resource_group.waRG.location
   service_plan_id     = azurerm_service_plan.dev-asp.id
@@ -77,9 +76,7 @@ resource "azurerm_linux_function_app" "dev-fa" {
     #application_insights_connection_string = azurerm_application_insights.this.connection_string
   }
   
-  tags = {
-    env = "dev"
-  }
+  tags = local.tags
 }
 
 # Actual Function App Could be deployed in many especially when you are working locally and playing around.
