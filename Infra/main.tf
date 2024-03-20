@@ -5,11 +5,20 @@ terraform {
         version = "~> 3.69"
     }
   }
+  # Update this block with the location of your terraform state file
+  backend "azurerm" {
+    resource_group_name  = "Infra-Resource"
+    storage_account_name = "configterraformsa"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+    use_oidc             = true
+  }
 }
 
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
   features {}
+  use_oidc = true
 }
 
 locals {
