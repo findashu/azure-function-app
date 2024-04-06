@@ -97,34 +97,36 @@ resource "azurerm_linux_function_app" "dev-fa" {
 #   use_manual_integration = true
 # }
 
-resource "azurerm_function_app_function" "restFA" {
-  name            = "simple-rest-fa"
-  enabled         = true
-  function_app_id = azurerm_linux_function_app.dev-fa.id
-  language        = "Javascript"
-  file {
-    name    = "index.js"
-    content = file("../Application/UserFA/index.js")
-  }
-  test_data = file("../Application/UserFA/sample.dat")
-  #config_json = file("../Application/UserFA/function.json");
-  config_json = jsonencode({
-    "bindings" = [
-      {
-        "authLevel" = "anonymous"
-        "direction" = "in"
-        "methods" = [
-          "get",
-          "post",
-        ]
-        "name" = "req"
-        "type" = "httpTrigger"
-      },
-      {
-        "direction" = "out"
-        "name"      = "res"
-        "type"      = "http"
-      },
-    ]
-  })
-}
+# Will add seperate pipeline to deploy the code.
+
+# resource "azurerm_function_app_function" "restFA" {
+#   name            = "simple-rest-fa"
+#   enabled         = true
+#   function_app_id = azurerm_linux_function_app.dev-fa.id
+#   language        = "Javascript"
+#   file {
+#     name    = "index.js"
+#     content = file("../Application/UserFA/index.js")
+#   }
+#   test_data = file("../Application/UserFA/sample.dat")
+#   #config_json = file("../Application/UserFA/function.json");
+#   config_json = jsonencode({
+#     "bindings" = [
+#       {
+#         "authLevel" = "anonymous"
+#         "direction" = "in"
+#         "methods" = [
+#           "get",
+#           "post",
+#         ]
+#         "name" = "req"
+#         "type" = "httpTrigger"
+#       },
+#       {
+#         "direction" = "out"
+#         "name"      = "res"
+#         "type"      = "http"
+#       },
+#     ]
+#   })
+# }
