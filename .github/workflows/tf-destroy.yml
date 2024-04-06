@@ -1,0 +1,63 @@
+# Manually Trigred Pipeline - To Delete the Infra after the testing.
+name: 'Terraform Destroy'
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'Infra/**'
+  workflow_dispatch:
+    inputs:
+        logLevel:
+          description: 'Log level'
+          required: true
+          default: 'warning'
+          type: choice
+          options:
+          - info
+          - warning
+          - debug  
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+
+jobs:
+  terraform-destroy:
+    name: 'Terraform Destroy'
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: Infra/
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of the Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init 
+
+    - name: Show Destroy Plan
+      run: terraform plan -destroy
+      continue-on-error: true
+
+    - name: Terraform Destroy
+      id: tf-destroy
+      run: terraform destroy -auto-approve
