@@ -136,10 +136,6 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
-    # Download saved plan from artifacts  
-    
-      
-
     # Terraform Apply
     - name: Terraform Apply
       run: terraform apply -auto-approve
