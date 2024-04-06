@@ -4,9 +4,13 @@ on:
   push:
     branches:
     - main
+    paths:
+      - 'Infra/**'
   pull_request:
     branches:
     - main
+    paths:
+      - 'Infra/**'
 
 #Special permissions required for OIDC authentication
 permissions:
