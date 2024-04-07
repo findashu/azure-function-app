@@ -44,7 +44,8 @@ Repository includes 3 main directories
 
 ### Deploy Infra Locally
 
-```Note : Make sure you are in Infra Directory```
+> [!NOTE]
+> Make sure you are in Infra Directory
 
 ```bash
 # login to azure account
@@ -59,6 +60,9 @@ terraform apply
 ### Infrastructure
 
 In the repository, Terraform is set up to utilize an Azure Storage Account as a backend to store the state file. If you prefer not to use a remote backend, you can safely remove the following code block from `Infra/main.tf`
+
+> [!TIP]
+> It's good to use remote backend for production env.
 
 ```terraform
 backend "azurerm" {
