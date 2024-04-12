@@ -2,6 +2,8 @@ name: 'Terraform Unit Tests'
 
 on:
   push:
+    paths:
+      - 'Infra/**'
 
 jobs:
   terraform:

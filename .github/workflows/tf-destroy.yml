@@ -2,11 +2,6 @@
 name: 'Terraform Destroy'
 
 on:
-  push:
-    branches:
-    - main
-    paths:
-    - 'Infra/**'
   workflow_dispatch:
     inputs:
         logLevel:
