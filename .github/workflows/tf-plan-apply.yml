@@ -11,6 +11,7 @@ on:
     - main
     paths:
       - 'Infra/**'
+  workflow_dispatch:
 
 #Special permissions required for OIDC authentication
 permissions:
