@@ -11,6 +11,7 @@ on:
       - main
       paths:
         - 'Application/**'
+    workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'testHttp'
